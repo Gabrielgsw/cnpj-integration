@@ -1,34 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect,useState } from 'react'
 import './App.css'
+import api from './services/api'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [inputValue, setInputValue] = useState("");
+  const [cnpj, setCnpj] = useState();
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value); 
+  };
+
+  const handleSearch = async () => {
+    try {
+      
+      const response = await api.get(`/${inputValue}`); 
+      setCnpj(response.data); // Armazena os dados retornados
+    } catch (err) {
+      console.error("Erro"+err) 
+    }
+  };
+
+  
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className='app'>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+        placeholder="Digite o CNPJ: "
+        style={{ padding: "10px", width: "300px", marginRight: "10px" }}
+      />
+      <button onClick={handleSearch} style={{ padding: "10px 20px" }}>
+        Buscar
+      </button>
+
+      {cnpj && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>Nome:{cnpj?.nome}</h3>
+          <h3>Nome fantasia:{cnpj?.fantasia}</h3>
+        </div>
+      )}
+    </div>
+    
   )
 }
 
